@@ -1,6 +1,9 @@
 <?php
 
-use App\Models\VehicleType;
+use App\Http\Controllers\Api\Pdf\ReservationPdfController;
+use App\Models\Reservation;
+use App\Pdf\TicketIn;
+use App\Pdf\TicketReservation;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,16 +17,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('prints')->group(function(){
+
+    Route::get('{reservation}/reservationIn', [ReservationPdfController::class, 'printTicketReservationIn']);
+    Route::get('{reservation}/reservationOut', [ReservationPdfController::class, 'printTicketReservationOut']);
+});
+
 Route::get('/', function () {
-    $day = random_int(1, 28);
-    $month = random_int(1, 12);
+    $reservation = Reservation::find(3);
 
-    $hour = random_int(6, 18);
-    $minute = random_int(0, 59);
-    $second = random_int(0, 59);
-
-    $startAt = \Carbon\Carbon::create(2022, $month, $day, $hour, $minute, $second);
-    $finishedAt = $startAt->addMonth();
-
-    echo "now {$startAt} - {$finishedAt}";
+    dd($reservation->getTotalToPay());
 });

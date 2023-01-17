@@ -33,7 +33,7 @@ class ReservationFactory extends Factory
         $finishedAt = $startAt;
 
         if($state->id !== 3){
-            $addminutes = random_int(10, 300);
+            $addminutes = random_int(10, 2880);
             $finishedAt = \Carbon\Carbon::create(2022, $month, $day, $hour, $minute, $second)->addMinutes($addminutes);
             $state->id = 2;
         }

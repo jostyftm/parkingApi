@@ -29,7 +29,6 @@ class ClientSaveRequest extends FormRequest
             'identification_type_id'    =>  'required',
             'identification_number'     =>  'required',
             'email'                     =>  'required|unique:users',
-            'password'                  =>  'required|confirmed',
         ];
     }
 }

@@ -53,6 +53,16 @@ class User extends Authenticatable
      */
     public $guard_name = 'sanctum';
 
+
+    /**
+     * 
+     */
+    public function getFullNameAttribute()
+    {
+        return "{$this->name} {$this->last_name}";
+    }
+
+
     /**
      * 
      */

@@ -63,4 +63,21 @@ class Client extends Model
 
         return $currentQuery;
     }
+
+    /**
+     * Scope search
+     * 
+     * @param String $s
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch(Builder $query, $s)
+    {
+        if($s){
+            return $query->whereHas('user', function($q) use ($s){
+                $q->where('name', 'LIKE', "%{$s}%")
+                ->orWhere('identification_number', 'LIKE', "%{$s}%");
+            });
+        }
+    }
 }

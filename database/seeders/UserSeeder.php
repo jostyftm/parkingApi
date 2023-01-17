@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
      */
     private function createClient()
     {
-        $clients = Client::factory()->count(15)->create()
+        $clients = Client::factory()->count(500)->create()
         ->each(function(Client $client){
             $client->reservations()->saveMany(Reservation::factory(['client_id' =>  $client->id])->count(10)->create());
         });

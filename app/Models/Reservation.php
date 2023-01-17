@@ -31,8 +31,8 @@ class Reservation extends Model
      * @var array
      */
     protected $casts = [
-        'started_at' => 'datetime:Y-m-d',
-        'finished_at' => 'datetime:Y-m-d',
+        'started_at' => 'datetime:Y-m-d H:i:s',
+        'finished_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**
@@ -48,6 +48,14 @@ class Reservation extends Model
                 $reservation->update();
             }
         });
+    }
+
+    /**
+     * 
+     */
+    public function getTotalPay()
+    {
+        return number_format($this->total_paid, 2);
     }
 
     /**
@@ -95,7 +103,7 @@ class Reservation extends Model
      */
     public function getTotalToPay()
     {
-        $difHour = $this->started_at->floatDiffInHours(\Carbon\Carbon::now());
+        $difHour = ceil($this->started_at->floatDiffInHours($this->finished_at));
 
         return round(($this->hour_price * $difHour), 2);
     }
@@ -193,5 +201,20 @@ class Reservation extends Model
         }
 
         return $currentQuery;
+    }
+
+    /**
+     * 
+     */
+    public function scopeSearch(Builder $query, $s)
+    {
+        if($s){
+            return $query->where('id', 'LIKE', "%{$s}%")
+            ->orWhereHas('client.user', function($q) use($s) {
+                $q->where('name', 'LIKE', "%{$s}%")
+                ->orWhere('identification_number', 'LIKE', "%{$s}%");
+            })
+            ->with('client.user');
+        }
     }
 }

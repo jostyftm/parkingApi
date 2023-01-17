@@ -9,7 +9,7 @@ use Spatie\Permission\Models\Role;
 class RoleSeeder extends Seeder
 {
     private $roles = [
-        'client'
+        'client',
     ];
 
     /**

@@ -19,7 +19,9 @@ class EmployeeController extends ApiController
      */
     public function index()
     {
-        $employees = Employee::with('user')->get();
+        $employees = Employee::with('user')
+        ->orderByDesc('id')
+        ->get();
 
         return $this->successResponse($employees);
     }
@@ -41,6 +43,7 @@ class EmployeeController extends ApiController
             $user->employee()->save(new Employee());
 
             // Assing Role
+            $user->assignRole('employee');
         });
 
         return $this->successResponse($user);

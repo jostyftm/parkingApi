@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationCreateRequest;
 use App\Models\Employee;
 use App\Models\ParkingPlace;
 use App\Models\Reservation;
 use App\Models\VehicleType;
+use App\Utils\Pagination;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,11 +19,26 @@ class ReservationController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $reservations = Reservation::with('client.user')
-        ->with('vehicleType', 'reservationState')
+
+        $reservations = collect();
+        $perPage = $request->limit ?? 10;
+        $currentPage = $request->page ?? 1;
+
+        $reservations = Reservation::search($request->q)
+        ->with(['client.user', 'vehicleType', 'reservationState'])
+        ->orderByDesc('id')
         ->get();
+
+        if(isset($request->paginate) && $request->paginate == true){
+            return $this->successResponse(
+                new Pagination($reservations, $currentPage, $perPage, [
+                    'path'  =>  $request->url(),
+                    'query' =>  $request->query()
+                ])
+            );
+        }
 
         return $this->successResponse($reservations);
     }
@@ -68,9 +83,9 @@ class ReservationController extends ApiController
     
             $placeAvaliable->update(['is_avaliable' => false]);
 
-            return $this->successResponse($reservationCreated);
         });
         
+        return $this->successResponse($reservationCreated);
     }
 
     /**
@@ -132,5 +147,12 @@ class ReservationController extends ApiController
         });
         
         return $this->successResponse($reservation);
+    }
+
+    public function cancelReservation(Request $request, Reservation $reservation)
+    {
+        $reservation->update(['reservation_state_id' => 3]);
+
+        return $this->successResponse([], 204);
     }
 }

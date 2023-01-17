@@ -36,7 +36,7 @@ class VehicleTypeSeeder extends Seeder
         foreach($this->types as $type){
             VehicleType::create([
                 'name'  =>  $type,
-                'price' =>  5000
+                'price' =>  1000
             ]);
         }
     }

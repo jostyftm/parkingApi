@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\IdentificationTypeController;
 use App\Http\Controllers\Api\ParkingPlaceController;
+use App\Http\Controllers\Api\Pdf\ReservationPdfController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VehicleTypeController;
@@ -34,6 +35,7 @@ Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 Route::get('/reservations/{reservation}/getInfoToPay', [ReservationController::class, 'getInfoToPay']);
 
+
 Route::prefix('statistics')->group(function(){
 
     Route::get('reservationByState', [StatisticController::class, 'reservationByState']);
@@ -52,6 +54,13 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::resource('employees', EmployeeController::class);
     Route::resource('parkingPlaces', ParkingPlaceController::class);
     Route::resource('vehicleTypes', VehicleTypeController::class);
+    Route::post('reservations/{reservation}/cancelReservation', [ReservationController::class, 'cancelReservation']);
     Route::post('reservations/{reservation}/payReservation', [ReservationController::class, 'payReservation']);
     Route::resource('reservations', ReservationController::class);
+
+    Route::prefix('prints')->group(function(){
+
+        Route::get('{reservation}/reservationIn', [ReservationPdfController::class, 'printTicketReservationIn']);
+        Route::get('{reservation}/reservationOut', [ReservationPdfController::class, 'printTicketReservationOut']);
+    });
 });
